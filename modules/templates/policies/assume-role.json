@@ -9,13 +9,12 @@
       "Effect": "Allow",
       "Sid": ""
     },
-     {
+    {
       "Effect": "Allow",
       "Principal": {
-        "AWS": "arn:aws:sts::711129375688:assumed-role/se_demos_dev-developer/Guy@hashicorp.com"
+        "AWS": "arn:aws:sts::526008833496:assumed-role/aws_emil.engfors_test-developer/emil.engfors@hashicorp.com"
       },
       "Action": "sts:AssumeRole"
     }
   ]
-
 }
