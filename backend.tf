@@ -1,9 +1,9 @@
 terraform {
   backend "remote" {
     hostname     = "app.terraform.io"
-    organization = "emea-se-playground-2019"
+    organization = "engfors-hashicorp"
     workspaces {
-      name = "Engfors-AWS-Demostack"
+      name = "terraform-aws-demostack"
     }
   }
 }
