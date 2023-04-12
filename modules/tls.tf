@@ -35,7 +35,7 @@ resource "tls_private_key" "server" {
 
 # Server signing request
 resource "tls_cert_request" "server" {
-  count           = var.servers
+  count = var.servers
   #key_algorithm   = element(tls_private_key.server.*.algorithm, count.index)
   private_key_pem = element(tls_private_key.server.*.private_key_pem, count.index)
 
@@ -75,9 +75,9 @@ resource "tls_cert_request" "server" {
     # Common
     "localhost",
     "*.${var.namespace}.${data.aws_route53_zone.fdqn.name}",
-    "server-0.engforsstack1.aws.sbx.engfors.tech",
-    "server-1.engforsstack1.aws.sbx.engfors.tech",
-    "server-2.engforsstack1.aws.sbx.engfors.tech",
+    # "server-0.engforsstack1.aws.sbx.engfors.tech",
+    # "server-1.engforsstack1.aws.sbx.engfors.tech",
+    # "server-2.engforsstack1.aws.sbx.engfors.tech",
   ]
 
   // ip_addresses = ["${aws_eip.server_ips.*.public_ip }"]
@@ -85,8 +85,8 @@ resource "tls_cert_request" "server" {
 
 # Server certificate
 resource "tls_locally_signed_cert" "server" {
-  count              = var.servers
-  cert_request_pem   = element(tls_cert_request.server.*.cert_request_pem, count.index)
+  count            = var.servers
+  cert_request_pem = element(tls_cert_request.server.*.cert_request_pem, count.index)
   #ca_key_algorithm   = var.ca_key_algorithm
   ca_private_key_pem = tls_self_signed_cert.root.private_key_pem
   ca_cert_pem        = tls_self_signed_cert.root.cert_pem
@@ -118,7 +118,7 @@ resource "tls_private_key" "workers" {
 
 # Client signing request
 resource "tls_cert_request" "workers" {
-  count           = var.workers
+  count = var.workers
   #key_algorithm   = element(tls_private_key.workers.*.algorithm, count.index)
   private_key_pem = element(tls_private_key.workers.*.private_key_pem, count.index)
 
@@ -216,8 +216,8 @@ resource "aws_route53_record" "validation_record" {
 */
 #  "${element(azurerm_public_ip.example.*.id, count.index)}"
 resource "aws_route53_record" "validation_record" {
-  name            = "${element(aws_acm_certificate.cert.domain_validation_options.*.resource_record_name, 0)}"
-  type            = "${element(aws_acm_certificate.cert.domain_validation_options.*.resource_record_type, 0)}"
+  name            = element(aws_acm_certificate.cert.domain_validation_options.*.resource_record_name, 0)
+  type            = element(aws_acm_certificate.cert.domain_validation_options.*.resource_record_type, 0)
   zone_id         = var.zone_id
   records         = ["${element(aws_acm_certificate.cert.domain_validation_options.*.resource_record_value, 0)}"]
   ttl             = "60"
