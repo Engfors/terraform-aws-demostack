@@ -4,7 +4,7 @@ resource "aws_alb" "consul" {
   security_groups = [aws_security_group.demostack.id]
   subnets         = aws_subnet.demostack.*.id
 
-   tags = local.common_tags
+  tags = local.common_tags
 }
 
 resource "aws_alb_target_group" "consul" {

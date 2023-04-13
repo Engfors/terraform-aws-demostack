@@ -4,7 +4,7 @@ resource "aws_alb" "vault" {
   security_groups = [aws_security_group.demostack.id]
   subnets         = aws_subnet.demostack.*.id
 
-    tags = local.common_tags
+  tags = local.common_tags
 }
 
 resource "aws_alb_target_group" "vault" {
@@ -51,7 +51,7 @@ resource "aws_alb_target_group_attachment" "vault" {
   target_group_arn = aws_alb_target_group.vault.arn
   target_id        = element(aws_instance.servers.*.id, count.index)
   port             = "8200"
-  
+
 }
 
 ##########################################################
@@ -63,7 +63,7 @@ resource "aws_alb" "vault_cluster" {
   security_groups = [aws_security_group.demostack.id]
   subnets         = aws_subnet.demostack.*.id
 
-   tags = local.common_tags
+  tags = local.common_tags
 }
 
 
@@ -94,7 +94,7 @@ resource "aws_alb_listener" "vault_cluster" {
   ]
 
   load_balancer_arn = aws_alb.vault.arn
-  
+
   port            = "8201"
   protocol        = "HTTPS"
   certificate_arn = aws_acm_certificate_validation.cert.certificate_arn
@@ -112,5 +112,5 @@ resource "aws_alb_target_group_attachment" "vault_cluster" {
   target_group_arn = aws_alb_target_group.vault_cluster.arn
   target_id        = element(aws_instance.servers.*.id, count.index)
   port             = "8201"
-  
+
 }

@@ -33,18 +33,18 @@ resource "aws_instance" "windows" {
   }
 
   ebs_block_device {
-    device_name = "/dev/sdh"
+    device_name           = "/dev/sdh"
     volume_size           = "240"
     delete_on_termination = "true"
   }
 
-  tags = merge(local.common_tags ,{
-   Purpose        = var.namespace ,
-   function       = "Windows"
-   Name            = "${var.namespace}-Windows" ,
-   }
+  tags = merge(local.common_tags, {
+    Purpose  = var.namespace,
+    function = "Windows"
+    Name     = "${var.namespace}-Windows",
+    }
   )
 
-get_password_data = true
-  user_data = base64encode(file("${path.module}/templates/windows/init.ps1"))
+  get_password_data = true
+  user_data         = base64encode(file("${path.module}/templates/windows/init.ps1"))
 }

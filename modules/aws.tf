@@ -12,13 +12,13 @@ data "aws_route53_zone" "fdqn" {
 data "aws_ami" "ubuntu" {
   most_recent = true
 
-# ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*
-#ubuntu/images/hvm-ssd/ubuntu-xenial-16.04-amd64-server-*
+  # ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*
+  #ubuntu/images/hvm-ssd/ubuntu-xenial-16.04-amd64-server-*
   filter {
-    name   = "name"
+    name = "name"
     # values = ["ubuntu/images/hvm-ssd/ubuntu-xenial-16.04-amd64-server-*"]
     #  values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
-      values = ["ubuntu/images/*ubuntu-jammy-22.04-amd64-server-*"]
+    values = ["ubuntu/images/*ubuntu-jammy-22.04-amd64-server-*"]
   }
 
   filter {
@@ -69,26 +69,26 @@ resource "aws_security_group" "demostack" {
   name_prefix = var.namespace
   vpc_id      = aws_vpc.demostack.id
 
-tags = local.common_tags
+  tags = local.common_tags
   #Allow internal communication between nodes
   ingress {
-    from_port   = -1
-    to_port     = -1
-    protocol    = -1
+    from_port = -1
+    to_port   = -1
+    protocol  = -1
   }
 
   ingress {
     from_port   = 4000
     to_port     = 32000
     protocol    = "tcp"
-      cidr_blocks = ["10.1.0.0/18"]
+    cidr_blocks = ["10.1.0.0/18"]
   }
 
   ingress {
     from_port   = 4000
     to_port     = 32000
     protocol    = "udp"
-      cidr_blocks = ["10.1.0.0/18"]
+    cidr_blocks = ["10.1.0.0/18"]
   }
 
 
@@ -96,14 +96,14 @@ tags = local.common_tags
     from_port   = 4000
     to_port     = 32000
     protocol    = "tcp"
-      cidr_blocks = ["10.2.0.0/18"]
+    cidr_blocks = ["10.2.0.0/18"]
   }
 
   ingress {
     from_port   = 4000
     to_port     = 32000
     protocol    = "udp"
-      cidr_blocks = ["10.2.0.0/18"]
+    cidr_blocks = ["10.2.0.0/18"]
   }
 
   # SSH access if host_access_ip has CIDR blocks
@@ -117,7 +117,7 @@ tags = local.common_tags
     }
   }
 
- # RDP access if host_access_ip has CIDR blocks
+  # RDP access if host_access_ip has CIDR blocks
   dynamic "ingress" {
     for_each = var.host_access_ip
     content {
@@ -133,22 +133,22 @@ tags = local.common_tags
   dynamic "ingress" {
     for_each = var.host_access_ip
     content {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = [ingress.value]
-  }
+      from_port   = 80
+      to_port     = 80
+      protocol    = "tcp"
+      cidr_blocks = [ingress.value]
+    }
   }
 
   #Demostack LDAP
   dynamic "ingress" {
     for_each = var.host_access_ip
     content {
-    from_port   = 389
-    to_port     = 389
-    protocol    = "tcp"
-    cidr_blocks = [ingress.value]
-  }
+      from_port   = 389
+      to_port     = 389
+      protocol    = "tcp"
+      cidr_blocks = [ingress.value]
+    }
   }
 
 
@@ -156,81 +156,81 @@ tags = local.common_tags
   dynamic "ingress" {
     for_each = var.host_access_ip
     content {
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = [ingress.value]
-  }
-  }
-
-#Grafana
-  dynamic "ingress" {
-    for_each = var.host_access_ip
-    content {
-    from_port   = 1521
-    to_port     = 1521
-    protocol    = "tcp"
-    cidr_blocks = [ingress.value]
-  }
+      from_port   = 443
+      to_port     = 443
+      protocol    = "tcp"
+      cidr_blocks = [ingress.value]
+    }
   }
 
   #Grafana
   dynamic "ingress" {
     for_each = var.host_access_ip
     content {
-    from_port   = 3000
-    to_port     = 3000
-    protocol    = "tcp"
-    cidr_blocks = [ingress.value]
+      from_port   = 1521
+      to_port     = 1521
+      protocol    = "tcp"
+      cidr_blocks = [ingress.value]
+    }
   }
+
+  #Grafana
+  dynamic "ingress" {
+    for_each = var.host_access_ip
+    content {
+      from_port   = 3000
+      to_port     = 3000
+      protocol    = "tcp"
+      cidr_blocks = [ingress.value]
+    }
   }
 
   #Demostack Postgres + pgadmin
   dynamic "ingress" {
     for_each = var.host_access_ip
     content {
-    from_port   = 5000
-    to_port     = 5500
-    protocol    = "tcp"
-    cidr_blocks = [ingress.value]
-    # cidr_blocks = flatten([ingress.value,data.tfe_ip_ranges.addresses.api])
-  }
+      from_port   = 5000
+      to_port     = 5500
+      protocol    = "tcp"
+      cidr_blocks = [ingress.value]
+      # cidr_blocks = flatten([ingress.value,data.tfe_ip_ranges.addresses.api])
+    }
   }
 
   #Consul and Vault and Boundary ports
   dynamic "ingress" {
     for_each = var.host_access_ip
     content {
-    from_port   = 8000
-    to_port     = 9300
-    protocol    = "tcp"
-    cidr_blocks = [ingress.value]
-    # cidr_blocks = flatten([ingress.value,data.tfe_ip_ranges.addresses.api])
-  }
+      from_port   = 8000
+      to_port     = 9300
+      protocol    = "tcp"
+      cidr_blocks = [ingress.value]
+      # cidr_blocks = flatten([ingress.value,data.tfe_ip_ranges.addresses.api])
+    }
   }
 
   #Fabio Ports
   dynamic "ingress" {
     for_each = var.host_access_ip
     content {
-    from_port   = 9998
-    to_port     = 9999
-    protocol    = "tcp"
-    cidr_blocks = [ingress.value]
-    # cidr_blocks = flatten([ingress.value,data.tfe_ip_ranges.addresses.api])
-  }
+      from_port   = 9998
+      to_port     = 9999
+      protocol    = "tcp"
+      cidr_blocks = [ingress.value]
+      # cidr_blocks = flatten([ingress.value,data.tfe_ip_ranges.addresses.api])
+    }
   }
 
   #Nomad
   dynamic "ingress" {
     for_each = var.host_access_ip
     content {
-    from_port   = 3000
-    to_port     = 4999
-    protocol    = "tcp"
-    cidr_blocks = [ingress.value]
-    # cidr_blocks = flatten([ingress.value,data.tfe_ip_ranges.addresses.api])
-  }
+      from_port   = 3000
+      to_port     = 4999
+      protocol    = "tcp"
+      cidr_blocks = [ingress.value]
+      # cidr_blocks = flatten([ingress.value,data.tfe_ip_ranges.addresses.api])
+    }
   }
 
   #More nomad ports
@@ -238,12 +238,12 @@ tags = local.common_tags
   dynamic "ingress" {
     for_each = var.host_access_ip
     content {
-    from_port   = 20000
-    to_port     = 32000
-    protocol    = "tcp"
-    cidr_blocks = [ingress.value]
-    # cidr_blocks = flatten([ingress.value,data.tfe_ip_ranges.addresses.api])
-  }
+      from_port   = 20000
+      to_port     = 32000
+      protocol    = "tcp"
+      cidr_blocks = [ingress.value]
+      # cidr_blocks = flatten([ingress.value,data.tfe_ip_ranges.addresses.api])
+    }
   }
 
   egress {
@@ -265,7 +265,7 @@ resource "aws_key_pair" "demostack" {
 resource "aws_iam_instance_profile" "consul-join" {
   name = "${var.namespace}-consul-join-instance-profile"
   role = aws_iam_role.consul-join.name
-tags = local.common_tags
+  tags = local.common_tags
 
 }
 
@@ -273,7 +273,7 @@ resource "aws_kms_key" "demostackVaultKeys" {
   description             = "KMS for the Consul Demo Vault"
   deletion_window_in_days = 10
 
-   tags = local.common_tags
+  tags = local.common_tags
 }
 
 resource "aws_iam_policy" "consul-join" {
@@ -282,7 +282,7 @@ resource "aws_iam_policy" "consul-join" {
 
   policy = data.aws_iam_policy_document.vault-server.json
 
-tags = local.common_tags
+  tags = local.common_tags
 }
 
 

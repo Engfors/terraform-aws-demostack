@@ -6,70 +6,70 @@ data "cloudinit_config" "workers" {
   gzip          = true
   base64_encode = true
 
-    #base
+  #base
   part {
     content_type = "text/x-shellscript"
-    content      = templatefile("${path.module}/templates/shared/base.sh",{
-    region     = var.region
-    enterprise = var.enterprise
-    node_name  = "${var.namespace}-worker-${count.index}"
-    me_ca      = tls_self_signed_cert.root.cert_pem
-    me_cert    = element(tls_locally_signed_cert.workers.*.cert_pem, count.index)
-    me_key     = element(tls_private_key.workers.*.private_key_pem, count.index)
-    public_key = var.public_key
+    content = templatefile("${path.module}/templates/shared/base.sh", {
+      region     = var.region
+      enterprise = var.enterprise
+      node_name  = "${var.namespace}-worker-${count.index}"
+      me_ca      = tls_self_signed_cert.root.cert_pem
+      me_cert    = element(tls_locally_signed_cert.workers.*.cert_pem, count.index)
+      me_key     = element(tls_private_key.workers.*.private_key_pem, count.index)
+      public_key = var.public_key
     })
-   }
+  }
 
   #docker
   part {
     content_type = "text/x-shellscript"
     content      = file("${path.module}/templates/shared/docker.sh")
-   }
+  }
 
   #consul
   part {
     content_type = "text/x-shellscript"
-    content      = templatefile("${path.module}/templates/workers/consul.sh",{
-    node_name  = "${var.namespace}-worker-${count.index}"
-    region = var.region
-     # Consul
-    consullicense = var.consullicense
-    consul_gossip_key     = var.consul_gossip_key
-    consul_join_tag_key   = "ConsulJoin"
-    consul_join_tag_value = var.consul_join_tag_value
-    consul_master_token   = var.consul_master_token
+    content = templatefile("${path.module}/templates/workers/consul.sh", {
+      node_name = "${var.namespace}-worker-${count.index}"
+      region    = var.region
+      # Consul
+      consullicense         = var.consullicense
+      consul_gossip_key     = var.consul_gossip_key
+      consul_join_tag_key   = "ConsulJoin"
+      consul_join_tag_value = var.consul_join_tag_value
+      consul_master_token   = var.consul_master_token
     })
   }
 
-   #nomad
+  #nomad
   part {
     content_type = "text/x-shellscript"
-    content      = templatefile("${path.module}/templates/workers/nomad.sh",{
-    node_name  = "${var.namespace}-worker-${count.index}"
-    # Nomad
-    cni_plugin_url   = var.cni_plugin_url
+    content = templatefile("${path.module}/templates/workers/nomad.sh", {
+      node_name = "${var.namespace}-worker-${count.index}"
+      # Nomad
+      cni_plugin_url = var.cni_plugin_url
     })
   }
 
-      #EBS
+  #EBS
   part {
     content_type = "text/x-shellscript"
-    content      = templatefile("${path.module}/templates/workers/ebs_volumes.sh",{
-    region     = var.region
-    run_nomad_jobs = var.run_nomad_jobs
-    # Nomad EBS Volumes
-    index                        = count.index + 1
-    count                        = var.workers
-    dc1                          = data.aws_availability_zones.available.names[0]
-    dc2                          = data.aws_availability_zones.available.names[1]
-    dc3                          = data.aws_availability_zones.available.names[2]
-    aws_ebs_volume_mysql_id      = aws_ebs_volume.shared.id
-    aws_ebs_volume_mongodb_id    = aws_ebs_volume.mongodb.id
-    aws_ebs_volume_prometheus_id = aws_ebs_volume.prometheus.id
-    aws_ebs_volume_shared_id     = aws_ebs_volume.shared.id
+    content = templatefile("${path.module}/templates/workers/ebs_volumes.sh", {
+      region         = var.region
+      run_nomad_jobs = var.run_nomad_jobs
+      # Nomad EBS Volumes
+      index                        = count.index + 1
+      count                        = var.workers
+      dc1                          = data.aws_availability_zones.available.names[0]
+      dc2                          = data.aws_availability_zones.available.names[1]
+      dc3                          = data.aws_availability_zones.available.names[2]
+      aws_ebs_volume_mysql_id      = aws_ebs_volume.shared.id
+      aws_ebs_volume_mongodb_id    = aws_ebs_volume.mongodb.id
+      aws_ebs_volume_prometheus_id = aws_ebs_volume.prometheus.id
+      aws_ebs_volume_shared_id     = aws_ebs_volume.shared.id
     })
   }
-#end
+  #end
 }
 
 resource "aws_instance" "workers" {
@@ -96,12 +96,12 @@ resource "aws_instance" "workers" {
     delete_on_termination = "true"
   }
 
-  tags = merge(local.common_tags ,{
-   ConsulJoin     = "${var.consul_join_tag_value}" ,
-   Purpose        = "demostack" ,
-   function       = "worker"
-   Name            = "${var.namespace}-worker-${count.index}" ,
-   }
+  tags = merge(local.common_tags, {
+    ConsulJoin = "${var.consul_join_tag_value}",
+    Purpose    = "demostack",
+    function   = "worker"
+    Name       = "${var.namespace}-worker-${count.index}",
+    }
   )
 
 

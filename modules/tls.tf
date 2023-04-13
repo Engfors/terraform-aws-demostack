@@ -75,9 +75,9 @@ resource "tls_cert_request" "server" {
     # Common
     "localhost",
     "*.${var.namespace}.${data.aws_route53_zone.fdqn.name}",
-    # "server-0.engforsstack1.aws.sbx.engfors.tech",
-    # "server-1.engforsstack1.aws.sbx.engfors.tech",
-    # "server-2.engforsstack1.aws.sbx.engfors.tech",
+    "server-0.engforsstack1.aws.sbx.engfors.tech",
+    "server-1.engforsstack1.aws.sbx.engfors.tech",
+    "server-2.engforsstack1.aws.sbx.engfors.tech",
   ]
 
   // ip_addresses = ["${aws_eip.server_ips.*.public_ip }"]

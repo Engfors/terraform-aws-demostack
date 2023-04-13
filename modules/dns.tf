@@ -46,7 +46,7 @@ resource "aws_route53_record" "nomad" {
   records = [aws_alb.nomad.dns_name]
   ttl     = "300"
 
-  
+
 }
 resource "aws_route53_record" "vault" {
   zone_id = var.zone_id
@@ -56,7 +56,7 @@ resource "aws_route53_record" "vault" {
   records = [aws_alb.vault.dns_name]
   ttl     = "300"
 
-  
+
 }
 
 resource "aws_route53_record" "servers" {
@@ -68,7 +68,7 @@ resource "aws_route53_record" "servers" {
   records = [element(aws_instance.servers.*.public_dns, count.index)]
   ttl     = "300"
 
- 
+
 }
 
 resource "aws_route53_record" "workers" {
@@ -80,6 +80,6 @@ resource "aws_route53_record" "workers" {
   records = [element(aws_instance.workers.*.public_dns, count.index)]
   ttl     = "300"
 
- 
+
 }
 
